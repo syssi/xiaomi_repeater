@@ -21,8 +21,6 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_TOKEN): vol.All(cv.string, vol.Length(min=32, max=32)),
 })
 
-MIN_TIME_BETWEEN_SCANS = timedelta(seconds=30)
-
 REQUIREMENTS = ['python-miio==0.3.8']
 
 
@@ -69,7 +67,6 @@ class XiaomiMiioDeviceScanner(DeviceScanner):
         """The repeater doesn't provide the name of the associated device."""
         return None
 
-    @Throttle(MIN_TIME_BETWEEN_SCANS)
     async def _async_update_info(self):
         """Query the repeater for associated devices."""
         from miio import DeviceException
