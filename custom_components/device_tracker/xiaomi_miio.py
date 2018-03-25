@@ -49,11 +49,11 @@ class XiaomiMiioDeviceScanner(DeviceScanner):
 
         try:
             self.device = Device(host, token)
-            self.device_info = self.device.info()
+            device_info = self.device.info()
             _LOGGER.info("%s %s %s detected",
-                         self.device_info.model,
-                         self.device_info.firmware_version,
-                         self.device_info.hardware_version)
+                         device_info.model,
+                         device_info.firmware_version,
+                         device_info.hardware_version)
             self.success_init = True
         except DeviceException as ex:
             _LOGGER.error("Device unavailable or token incorrect: %s", ex)
