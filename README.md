@@ -9,7 +9,7 @@ Credits: Thanks to [Rytilahti](https://github.com/rytilahti/python-miio) for all
 ## Setup
 
 ```yaml
-# confugration.yaml
+# configuration.yaml
 
 device_tracker:
   - platform: xiaomi_miio
