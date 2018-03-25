@@ -6,12 +6,6 @@ Please follow the instructions on [Retrieving the Access Token](https://home-ass
 
 Credits: Thanks to [Rytilahti](https://github.com/rytilahti/python-miio) for all the work.
 
-## Features
-
-### WiFi Repeater 2
-
-* TBD
-
 ## Setup
 
 ```yaml
