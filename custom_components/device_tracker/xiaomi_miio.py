@@ -10,7 +10,8 @@ from datetime import timedelta
 import voluptuous as vol
 
 import homeassistant.helpers.config_validation as cv
-from homeassistant.components.device_tracker import (DOMAIN, PLATFORM_SCHEMA, DeviceScanner)
+from homeassistant.components.device_tracker import (DOMAIN, PLATFORM_SCHEMA,
+                                                     DeviceScanner)
 from homeassistant.const import (CONF_NAME, CONF_HOST, CONF_TOKEN)
 
 _LOGGER = logging.getLogger(__name__)
@@ -70,10 +71,7 @@ class XiaomiMiioDeviceScanner(DeviceScanner):
 
     @Throttle(MIN_TIME_BETWEEN_SCANS)
     async def _async_update_info(self):
-        """
-        Query the repeater for associated devices
-        Returns boolean if scanning successful.
-        """
+        """Query the repeater for associated devices."""
         from miio import DeviceException
 
         try:
