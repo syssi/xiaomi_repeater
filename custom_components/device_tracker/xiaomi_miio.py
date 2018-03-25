@@ -29,8 +29,8 @@ def get_scanner(hass, config):
     from miio import Device, DeviceException
 
     scanner = None
-    host = config.get(CONF_HOST)
-    token = config.get(CONF_TOKEN)
+    host = config[DOMAIN].get(CONF_HOST)
+    token = config[DOMAIN].get(CONF_TOKEN)
 
     _LOGGER.info(
         "Initializing with host %s (token %s...)", host, token[:5])
