@@ -12,7 +12,7 @@ import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.device_tracker import (DOMAIN, PLATFORM_SCHEMA,
                                                      DeviceScanner)
-from homeassistant.const import (CONF_NAME, CONF_HOST, CONF_TOKEN)
+from homeassistant.const import (CONF_HOST, CONF_TOKEN)
 
 _LOGGER = logging.getLogger(__name__)
 
