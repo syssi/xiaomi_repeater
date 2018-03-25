@@ -26,62 +26,55 @@ REQUIREMENTS = ['python-miio==0.3.8']
 
 def get_scanner(hass, config):
     """Return a Xiaomi MiIO device scanner."""
-    scanner = XiaomiMiioDeviceScanner(hass, config[DOMAIN])
-    return scanner if scanner.success_init else None
+    from miio import Device, DeviceException
+
+    scanner = None
+    host = config.get(CONF_HOST)
+    token = config.get(CONF_TOKEN)
+
+    _LOGGER.info(
+        "Initializing with host %s (token %s...)", host, token[:5])
+
+    try:
+        device = Device(host, token)
+        device_info = device.info()
+        _LOGGER.info("%s %s %s detected",
+                     device_info.model,
+                     device_info.firmware_version,
+                     device_info.hardware_version)
+        scanner = XiaomiMiioDeviceScanner(hass, device)
+    except DeviceException as ex:
+        _LOGGER.error("Device unavailable or token incorrect: %s", ex)
+
+    return scanner
 
 
 class XiaomiMiioDeviceScanner(DeviceScanner):
     """This class queries a Xiaomi Mi WiFi Repeater."""
 
-    def __init__(self, hass, config):
+    def __init__(self, hass, device):
         """Initialize the scanner."""
-        from miio import Device, DeviceException
-
-        host = config.get(CONF_HOST)
-        token = config.get(CONF_TOKEN)
-
-        self.success_init = False
-        self.last_results = []
-
-        _LOGGER.info(
-            "Initializing with host %s (token %s...)", host, token[:5])
-
-        try:
-            self.device = Device(host, token)
-            device_info = self.device.info()
-            _LOGGER.info("%s %s %s detected",
-                         device_info.model,
-                         device_info.firmware_version,
-                         device_info.hardware_version)
-            self.success_init = True
-        except DeviceException as ex:
-            _LOGGER.error("Device unavailable or token incorrect: %s", ex)
-            self.success_init = False
+        self.device = device
 
     async def async_scan_devices(self):
         """Scan for devices and return a list containing found device ids."""
-        await self._async_update_info()
-        return self.last_results
+        from miio import DeviceException
+
+        devices = []
+        try:
+            station_info = await self.hass.async_add_job(
+                self.device.raw_command('get_repeater_sta_info', [])
+            )
+            _LOGGER.debug("Got new station info: %s", station_info)
+
+            for device in station_info['mat']:
+                devices.append(device['mac'])
+
+        except DeviceException as ex:
+            _LOGGER.error("Got exception while fetching the state: %s", ex)
+
+        return devices
 
     async def async_get_device_name(self, device):
         """The repeater doesn't provide the name of the associated device."""
         return None
-
-    async def _async_update_info(self):
-        """Query the repeater for associated devices."""
-        from miio import DeviceException
-
-        try:
-            station_info = await self.hass.async_add_job(
-                self._device.raw_command('get_repeater_sta_info', [])
-            )
-            _LOGGER.debug("Got new station info: %s", station_info)
-
-            last_results = []
-            for device in station_info['mat']:
-                last_results.append(device['mac'])
-
-            self.last_results = last_results
-
-        except DeviceException as ex:
-            _LOGGER.error("Got exception while fetching the state: %s", ex)
