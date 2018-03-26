@@ -63,7 +63,7 @@ class XiaomiMiioDeviceScanner(DeviceScanner):
         devices = []
         try:
             station_info = await self.hass.async_add_job(
-                self.device.raw_command('get_repeater_sta_info', [])
+                self.device.raw_command('miIO.get_repeater_sta_info', [])
             )
             _LOGGER.debug("Got new station info: %s", station_info)
 
