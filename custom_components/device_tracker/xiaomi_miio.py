@@ -54,7 +54,6 @@ class XiaomiMiioDeviceScanner(DeviceScanner):
 
     def __init__(self, hass, device):
         """Initialize the scanner."""
-        self.hass = hass
         self.device = device
 
     async def async_scan_devices(self):
