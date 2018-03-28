@@ -21,12 +21,12 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_TOKEN): vol.All(cv.string, vol.Length(min=32, max=32)),
 })
 
-REQUIREMENTS = ['python-miio==0.3.8']
+REQUIREMENTS = ['python-miio>=0.3.9']
 
 
 def get_scanner(hass, config):
     """Return a Xiaomi MiIO device scanner."""
-    from miio import Device, DeviceException
+    from miio import WifiRepeater, DeviceException
 
     scanner = None
     host = config[DOMAIN].get(CONF_HOST)
@@ -36,7 +36,7 @@ def get_scanner(hass, config):
         "Initializing with host %s (token %s...)", host, token[:5])
 
     try:
-        device = Device(host, token)
+        device = WifiRepeater(host, token)
         device_info = device.info()
         _LOGGER.info("%s %s %s detected",
                      device_info.model,
@@ -62,8 +62,7 @@ class XiaomiMiioDeviceScanner(DeviceScanner):
 
         devices = []
         try:
-            station_info = await self.hass.async_add_job(
-                self.device.send, 'miIO.get_repeater_sta_info', [])
+            station_info = await self.hass.async_add_job(self.device.status)
             _LOGGER.debug("Got new station info: %s", station_info)
 
             for device in station_info['mat']:
