@@ -1,21 +1,20 @@
-"""
-Support for Xiaomi Mi WiFi Repeater 2
+"""Support for Xiaomi Mi WiFi Repeater 2.
 
 For more details about this platform, please refer to the documentation
 https://home-assistant.io/components/device_tracker.xiaomi_miio/
 """
+
 import logging
 
-from datetime import timedelta
-import voluptuous as vol
-
-import homeassistant.helpers.config_validation as cv
 from homeassistant.components.device_tracker import (
     DOMAIN,
     PLATFORM_SCHEMA,
     DeviceScanner,
 )
 from homeassistant.const import CONF_HOST, CONF_TOKEN
+import homeassistant.helpers.config_validation as cv
+from miio import DeviceException, WifiRepeater
+import voluptuous as vol
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,8 +30,6 @@ REQUIREMENTS = ["python-miio>=0.3.9"]
 
 def get_scanner(hass, config):
     """Return a Xiaomi MiIO device scanner."""
-    from miio import WifiRepeater, DeviceException
-
     scanner = None
     host = config[DOMAIN].get(CONF_HOST)
     token = config[DOMAIN].get(CONF_TOKEN)
@@ -56,7 +53,7 @@ def get_scanner(hass, config):
 
 
 class XiaomiMiioDeviceScanner(DeviceScanner):
-    """This class queries a Xiaomi Mi WiFi Repeater."""
+    """Query a Xiaomi Mi WiFi Repeater."""
 
     def __init__(self, hass, device):
         """Initialize the scanner."""
@@ -64,8 +61,6 @@ class XiaomiMiioDeviceScanner(DeviceScanner):
 
     async def async_scan_devices(self):
         """Scan for devices and return a list containing found device ids."""
-        from miio import DeviceException
-
         devices = []
         try:
             station_info = await self.hass.async_add_job(self.device.status)
@@ -80,5 +75,5 @@ class XiaomiMiioDeviceScanner(DeviceScanner):
         return devices
 
     async def async_get_device_name(self, device):
-        """The repeater doesn't provide the name of the associated device."""
+        """Return None as the repeater doesn't provide device names."""
         return None
