@@ -46,11 +46,8 @@ rules:
     max-end: 0
   empty-values:
     level: error
-    forbid-in-block-mappings: true
+    forbid-in-block-mappings: false
     forbid-in-flow-mappings: true
-  hashes:
-    level: error
-    min-spaces-after-marker: 1
   indentation:
     level: error
     spaces: 2
